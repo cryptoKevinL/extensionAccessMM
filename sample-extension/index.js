@@ -47,6 +47,10 @@ function renderText (text) {
   console.log(text);
 }
 
+// provider.on('accountsChanged', async () => {
+//   renderText("i see you");
+// });
+
 const checkIfWalletIsConnected = async () => {
   try {        
      if (provider) {
@@ -57,7 +61,7 @@ const checkIfWalletIsConnected = async () => {
         provider.request({method: 'eth_requestAccounts'})
         .then((accounts) => {
           selectedWalletAddress = `${accounts[0]}`
-          renderText(`Detected MetaMask account ${accounts[0]}`)
+          renderText(`Still selected ${accounts[0]}`)
         })         
       } else {
          console.log('MetaMask provider not detected.')
