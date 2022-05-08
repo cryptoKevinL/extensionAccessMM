@@ -27,6 +27,7 @@
     "@metamask/inpage-provider": "^8.0.3",
     "detect-browser": "^3.0.0",
     "extension-port-stream": "^2.0.0",
+    "ipfs-http-client": "^56.0.3",
     "metamask-extension-provider": "^3.0.0"
   },
   "devDependencies": {

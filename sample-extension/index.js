@@ -7,18 +7,19 @@ const counter = document.getElementById( 'notify-count' );
 let restApiUrl = 'https://simplechatapiforus.herokuapp.com/users'; 
 let streamID = 'this should never work'; // test data
 
-const provider = createProvider()
+const provider = createProvider.createMetaMaskProvider();
 
 let selectedWalletAddress = "none";
 let loadedMsgs = []; 
 
-// document.addEventListener('DOMContentLoaded', function () {
-//   console.log('DOMContent.........');
-//   //let accounts = provider.request({method: 'eth_requestAccounts'}) //eth.accounts()
-//   // const interval = setInterval(function () {
-//   //   updateChatData();
-//   // }, 5000);
-// });
+document.addEventListener('DOMContentLoaded', function () {
+  console.log('DOMContent.........');
+  //let accounts = provider.request({method: 'eth_requestAccounts'}) //eth.accounts()
+  const interval = setInterval(function () {
+    //updateChatData();
+    updateIpfsData();
+  }, 10000);
+});
 
 renderText('Loading...')
 
@@ -151,6 +152,11 @@ console.log("adding message sender:", message);
 appendMessage(PERSON_NAME, PERSON_IMG, "right", message);
 loadedMsgs[restApiMsgId] = true;
 }
+}
+
+async function updateIpfsData() {
+  const cid = await createProvider.uploadNewDataToIPFS(text.value);
+  renderText(`cid: ${cid}`);
 }
 
 function updateChatData() {

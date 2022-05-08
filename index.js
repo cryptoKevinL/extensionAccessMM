@@ -1,10 +1,12 @@
 const { MetaMaskInpageProvider } = require('@metamask/inpage-provider')
 const PortStream = require('extension-port-stream')
 const { detect } = require('detect-browser')
+const { create } = require('ipfs-http-client')
 const browser = detect()
 const config = require('./config.json')
+const client = create('https://ipfs.infura.io:5001/api/v0')
 
-module.exports = function createMetaMaskProvider () {
+function createMetaMaskProvider () {
   let provider
   try {
     let currentMetaMaskId = getMetaMaskId()
@@ -27,5 +29,30 @@ function getMetaMaskId () {
     default:
       return config.CHROME_ID
   }
+}
+
+
+// function uploadNewDataToIPFS (text) {
+//   let cidReturn = "failed";
+//   client.add(text).then(cid => {
+//     const url = `https://ipfs.infura.io/ipfs/${cid.path}`
+//     console.log('IPFS link: ', url)
+//     cidReturn = `${cid.path}`
+//   })
+//   return cidReturn;
+// }
+
+async function uploadNewDataToIPFS (text) {
+  let cidReturn = "failed";
+  let cid = await client.add(text)
+  const url = `https://ipfs.infura.io/ipfs/${cid.path}`
+  console.log('IPFS link: ', url)
+  cidReturn = `${cid.path}`
+  return cidReturn;
+}
+
+module.exports = {
+  uploadNewDataToIPFS,
+  createMetaMaskProvider
 }
 
