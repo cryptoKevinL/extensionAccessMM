@@ -3,6 +3,7 @@
   "short_name": "web3-tester",
   "version": "0.0.1",
   "manifest_version": 2,
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "author": "https://metamask.io",
   "description": "A demonstration of Metamask integration",
   "commands": {

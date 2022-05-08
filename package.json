@@ -26,7 +26,8 @@
   "dependencies": {
     "@metamask/inpage-provider": "^8.0.3",
     "detect-browser": "^3.0.0",
-    "extension-port-stream": "^2.0.0"
+    "extension-port-stream": "^2.0.0",
+    "metamask-extension-provider": "^3.0.0"
   },
   "devDependencies": {
     "ethjs": "^0.4.0"
