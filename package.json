@@ -25,7 +25,12 @@
   "homepage": "https://github.com/danfinlay/metamask-extension-provider#readme",
   "dependencies": {
     "@metamask/inpage-provider": "^8.0.3",
+    "browserify": "^17.0.0",
+    "buffer": "^6.0.3",
     "detect-browser": "^3.0.0",
+    "eth-sig-util": "^3.0.1",
+    "ethereumjs-tx": "^2.1.2",
+    "ethereumjs-util": "^7.1.4",
     "extension-port-stream": "^2.0.0",
     "ipfs-http-client": "^56.0.3",
     "metamask-extension-provider": "^3.0.0"

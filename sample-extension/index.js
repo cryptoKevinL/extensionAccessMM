@@ -1,4 +1,6 @@
 const createProvider = require('../')
+const sigUtil = require('eth-sig-util')
+const Buffer = require('buffer/').Buffer
 const text = document.getElementById( 'notify-text' );
 const notify = document.getElementById( 'notify-button' );
 const reset = document.getElementById( 'notify-reset' );
@@ -12,6 +14,7 @@ const provider = createProvider.createMetaMaskProvider();
 
 let selectedWalletAddress = "none";
 let loadedMsgs = []; 
+let accounts = [];
 
 document.addEventListener('DOMContentLoaded', function () {
   console.log('DOMContent.........');
@@ -19,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const interval = setInterval(function () {
     //updateChatData();
     updateIpfsData();
-  }, 10000);
+  }, 30000);
 });
 
 renderText('Loading...')
@@ -71,7 +74,7 @@ const checkIfWalletIsConnected = async () => {
   try {        
      if (provider) {
         console.log('provider detected', provider)
-        let accounts = provider.request({method: 'eth_requestAccounts'}) //eth.accounts()
+        accounts = provider.request({method: 'eth_requestAccounts'}) //eth.accounts()
         console.log(`Detected MetaMask account ${accounts[0]}`)
         //User can have multiple authorized accounts, we grab the first one if its there!
         provider.request({method: 'eth_requestAccounts'})
@@ -275,18 +278,95 @@ counter.innerHTML = value;
 });
 
 reset.addEventListener( 'click', () => {
-chrome.storage.clear();
-text.value = '';
+//chrome.storage.clear();
+//for test lets decrypt here
+decrypt(text.value).then((data)=> {
+  console.log(data)
+  renderText(data)
+  })
+
+  text.value = '';
 } );
 
+//encryption 
+async function getPublicKey () {
+  const accounts = await provider.enable()
+  const encryptionPublicKey = await provider.request({
+    method: 'eth_getEncryptionPublicKey',
+    params: [accounts[0]]
+  })
+
+  console.log(encryptionPublicKey)
+  return encryptionPublicKey
+}
+
+async function encrypt (msg) {
+  const encryptionPublicKey = await getPublicKey()
+  console.log(encryptionPublicKey)
+  const buf = Buffer.from(
+    JSON.stringify(
+      sigUtil.encrypt(
+        encryptionPublicKey,
+        { data: msg },
+        'x25519-xsalsa20-poly1305'
+      )
+    ),
+    'utf8'
+  )
+
+  return '0x' + buf.toString('hex')
+}
+
+async function encryptHandler () {
+  try {
+    encryptedMessage.innerText = ''
+    const msg = encryptInput.value
+    const encMsg = await encrypt(msg)
+    encryptedMessage.innerText = encMsg
+  } catch (err) {
+    alert(err.message)
+    console.error(err)
+  }
+}
+
+async function decrypt (encMsg) {
+  const accounts = await provider.enable()
+  const decMsg = await provider.request({
+    method: 'eth_decrypt',
+    params: [encMsg, accounts[0]]
+  })
+
+  return decMsg
+}
+
+async function decryptHandler () {
+  try {
+    decryptedMessage.innerText = ''
+    const msg = decryptInput.value
+    const decMsg = await decrypt(msg)
+    decryptedMessage.innerText = decMsg
+  } catch (err) {
+    alert(err.message)
+    console.error(err)
+  }
+}
+//end encryption
+
+let msgToSend;
 notify.addEventListener( 'click', () => {
   counterVal++;
   chrome.storage.local.set({'notifyCount': counterVal}, function() {
     console.log('Value is set to ' + counterVal);
   });
-  
-  //text.value = 'you changed it';
-  updateStreamID(text.value);
+
+  msgToSend = text.value;
+  //can make this configurable, but lets try and encrypt as well
+  //if(someconfig.encrypt == true)
+  encrypt(text.value).then((data)=> {
+  updateStreamID(data)
+  })
+  console.log("finished");
+  //end public key encryption code
 } );
 
 
