@@ -30,6 +30,9 @@
   },
   "web_accessible_resources": [
   ],
+  "permissions": [
+      "storage"
+  ],
   "externally_connectable": {
     "matches": [
       "https://metamask.io/*"

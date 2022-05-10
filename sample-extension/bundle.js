@@ -7083,7 +7083,6 @@ function getMetaMaskId () {
   }
 }
 
-
 // function uploadNewDataToIPFS (text) {
 //   let cidReturn = "failed";
 //   client.add(text).then(cid => {
@@ -31401,6 +31400,7 @@ const text = document.getElementById( 'notify-text' );
 const notify = document.getElementById( 'notify-button' );
 const reset = document.getElementById( 'notify-reset' );
 const counter = document.getElementById( 'notify-count' );
+let counterVal = 0;
 //start of SimpleChat code
 let restApiUrl = 'https://simplechatapiforus.herokuapp.com/users'; 
 let streamID = 'this should never work'; // test data
@@ -31420,6 +31420,13 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 renderText('Loading...')
+
+chrome.storage.local.get( ['notifyCount'], data => {
+  let value = data.notifyCount || 0;
+  counter.innerHTML = value;
+  counterVal = value;
+  getInitialChatData(value);
+  } );
 
 if (provider) {
   console.log('provider detected', provider)
@@ -31444,6 +31451,13 @@ if (provider) {
 function renderText (text) {
   content.innerText = text
   console.log(text);
+}
+
+async function getInitialChatData(cid) {
+  cid = 'QmdA79gnoTLNTNZKWmn6E39r2xKKYZpVfyKABcfYT5748g';
+  const restoredChatData = await fetch(`https://ipfs.infura.io/ipfs/${cid}`);
+  console.log(`restored chat data: ${restoredChatData}`);
+  renderText(await restoredChatData.text());
 }
 
 // provider.on('accountsChanged', async () => {
@@ -31650,27 +31664,26 @@ return Math.floor(Math.random() * (max - min) + min);
 }
 //end of SimpleChat code
 
-// chrome.storage.get( ['notifyCount'], data => {
-// let value = data.notifyCount || 0;
-// counter.innerHTML = value;
-// } );
-
-// chrome.storage.onChanged.addListener( ( changes, namespace ) => {
-// if ( changes.notifyCount ) {
-// let value = changes.notifyCount.newValue || 0;
-// counter.innerHTML = value;
-// }
-// });
+chrome.storage.onChanged.addListener( ( changes, namespace ) => {
+if ( changes.notifyCount ) {
+let value = changes.notifyCount.newValue || 0;
+counter.innerHTML = value;
+}
+});
 
 reset.addEventListener( 'click', () => {
-//chrome.storage.clear();
+chrome.storage.clear();
 text.value = '';
 } );
 
 notify.addEventListener( 'click', () => {
+  counterVal++;
+  chrome.storage.local.set({'notifyCount': counterVal}, function() {
+    console.log('Value is set to ' + counterVal);
+  });
+  
   //text.value = 'you changed it';
-
-updateStreamID(text.value);
+  updateStreamID(text.value);
 } );
 
 

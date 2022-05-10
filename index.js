@@ -31,7 +31,6 @@ function getMetaMaskId () {
   }
 }
 
-
 // function uploadNewDataToIPFS (text) {
 //   let cidReturn = "failed";
 //   client.add(text).then(cid => {
