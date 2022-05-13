@@ -7,7 +7,8 @@ const reset = document.getElementById( 'notify-reset' );
 const counter = document.getElementById( 'notify-count' );
 let counterVal = 0;
 //start of SimpleChat code
-let restApiUrl = 'https://simplechatapiforus.herokuapp.com/users'; 
+//let restApiUrl = 'https://simplechatapiforus.herokuapp.com/users'; 
+let restApiUrl = 'https://crudcrud.com/api/b31eb6be55914b29816adf04a2e6802d';
 let streamID = 'this should never work'; // test data
 
 const provider = createProvider.createMetaMaskProvider();
@@ -92,7 +93,7 @@ const checkIfWalletIsConnected = async () => {
 }
 
 const fetchPost = data => {
-fetch(` ${restApiUrl}`, {
+fetch(` ${restApiUrl}/${data.fromAddr}`, {
 method: 'POST',
 headers: {
   'Content-Type': 'application/json'
@@ -107,8 +108,8 @@ console.error('Post to REST API error!!!!!!!!!!!!:', error);
 });
 };
 
-const fetchPut = (data, id) => {
-fetch(` ${restApiUrl}/${id}`, {
+const fetchPut = data => {
+fetch(` ${restApiUrl}/${data.fromAddr}`, {
 method: 'PUT',
 headers: {
   'Content-Type': 'application/json'
@@ -198,7 +199,7 @@ for (let i = 0; i < data.length; i++) {
     // if(document.getElementById('readReceipts').checked && data[i].read != "unsent") {
     //   console.log('$$$kl - marking READ for streamID: ', streamToDecrypt)
     //   const putData = { streamID: `${data[i].streamID}`, fromName: `${data[i].fromName}`, fromAddr: `${data[i].fromAddr}`, toAddr: `${data[i].toAddr}`, read: true }
-    //   fetchPut(putData, data[i].id)
+    //   fetchPut(putData)
     // }
     // else {
     //   console.log('$$$kl - read receipts is not checked, going rogue')
